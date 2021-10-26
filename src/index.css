@@ -10,3 +10,21 @@ body,
   margin: 0;
   padding: 0;
 }
+.recording {
+  background-color: white;
+  border-radius: 4px;
+  padding: 0.5rem;
+
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+
+  z-index: 10;
+
+  cursor: pointer;
+}
+
+.recording.active {
+  background-color: red;
+  outline: red;
+}
