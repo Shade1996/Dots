@@ -64,11 +64,11 @@ function Dots () {
 }
 
 export default function App () {
-  const [bind, startRecording] = useCapture({ duration: 2, fps: 100 })
+  const [bind, startRecording] = useCapture({ format: 'png', duration: 4, fps: 60 })
 
   return (
     <>
-      <button onClick={startRecording}> ⏺️ Start Recording </button>
+      <button className='recording' onClick={startRecording}> ⏺️ Start Recording </button>
       <Canvas
         gl={{
           preserveDrawingBuffer: true
