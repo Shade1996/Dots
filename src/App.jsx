@@ -64,12 +64,12 @@ function Dots ({ phase, roundness, frequency, amplitude }) {
     </instancedMesh>
   )
 }
-
+// phase: 14.8 roundness:100 frequency:1 amplitude:30
 export default function App () {
   const props = useControls({
-    phase: { value: 7, min: 3, max: 7, step: 0.01 },
+    phase: { value: 7, min: 0, max: 100, step: 0.01 },
     roundness: { value: 97.7, min: 0.1, max: 100, step: 0.1 },
-    frequency: { value: 1, min: 1, max: 5.6, step: 0.1 },
+    frequency: { value: 1, min: 0, max: 10, step: 0.1 },
     amplitude: { value: 50, min: 0, max: 200 }
   })
   return (
