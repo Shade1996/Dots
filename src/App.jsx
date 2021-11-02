@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
+import { useControls } from 'leva'
 import React, { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import useCapture from 'use-capture'
 import { Effects } from './Effects'
 
 // https://www.desmos.com/calculator/agt7tb1dky?lang=zh-CN
@@ -9,7 +9,8 @@ const roundedSquareWave = (t, delta, a, f) => {
   return ((2 * a) / Math.PI) * Math.atan(Math.sin(2 * Math.PI * t * f) / delta)
 }
 
-function Dots () {
+// eslint-disable-next-line react/prop-types
+function Dots ({ phase, roundness, frequency, amplitude }) {
   const ref = useRef()
   // vec to cache position to cal
   const { vec, transform, positions, distances } = useMemo(() => {
@@ -31,21 +32,22 @@ function Dots () {
       return position
     })
     // 平行x轴的向量
-    const right = new THREE.Vector3(1, 0, 0)
+    // const right = new THREE.Vector3(1, 0, 0)
     // 每一个位置到(0,0,0)的长度的数组
     // https://www.desmos.com/calculator/4eiqbvjdzm?lang=zh-CN
     const distances = positions.map((pos) => (
     // 八边形 Octagon
-      pos.length() + Math.cos(pos.angleTo(right) * 8) * 0.5
+      pos.length()
     ))
     return { vec, transform, positions, distances }
   }, [])
 
   useFrame(({ clock }) => {
     for (let i = 0; i < 10000; ++i) {
-      const t = clock.elapsedTime - distances[i] / 80
+      // Distance affects the wave phase
+      const t = clock.elapsedTime - distances[i] / phase
       // change Frequency Amplitude
-      const wave = roundedSquareWave(t, 0.1, 1, 1 / 4)
+      const wave = roundedSquareWave(t, roundness, amplitude, frequency)
       const scale = 1 + wave * 0.3
       // 将该向量与所传入的标量scale进行相乘。
       vec.copy(positions[i]).multiplyScalar(scale)
@@ -64,22 +66,24 @@ function Dots () {
 }
 
 export default function App () {
-  const [bind, startRecording] = useCapture({ format: 'png', duration: 4, fps: 60 })
-
+  const props = useControls({
+    phase: { value: 7, min: 3, max: 7, step: 0.01 },
+    roundness: { value: 97.7, min: 0.1, max: 100, step: 0.1 },
+    frequency: { value: 1, min: 1, max: 5.6, step: 0.1 },
+    amplitude: { value: 50, min: 0, max: 200 }
+  })
   return (
     <>
-      <button className='recording' onClick={startRecording}> ⏺️ Start Recording </button>
       <Canvas
         gl={{
           preserveDrawingBuffer: true
         }}
-        onCreated={bind}
         orthographic
         camera={{ zoom: 20 }}
         colorManagement={false}
       >
         <color attach="background" args={['black']} />
-        <Dots />
+        <Dots {...props}/>
         <Effects />
       </Canvas>
     </>
